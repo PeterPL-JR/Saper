@@ -22,7 +22,12 @@ const colors = [
 container.style.width = size + "px";
 container.style.height = size + "px";
 
-function showTile(x, y) {
+function showEmptyTiles(x, y) {
+
+    if(tiles[x][y].bounds != 0) {
+        showTile(tiles[x][y]);
+        return;
+    }
 
     for(var array of boundsPositions) {
         
@@ -115,9 +120,12 @@ function clickTile(x, y) {
         firstClicked = true;
         createBombs();
         createBounds();
-        showTile(x, y);
     }
+    showTile(tile);
+    showEmptyTiles(x, y);
+}
 
+function showTile(tile) {
     if (tile.bomb) {
         tile.obj.innerHTML = "<div class='bomb'></div>"
     } else if(tile.bounds != 0) {
