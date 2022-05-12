@@ -26,3 +26,15 @@ body {
     outline: solid gray 2px;
     outline-offset: -2px;
 }
+
+.bomb {
+    width: 40px;
+    height: 40px;
+
+    background-color: #0e0e1c;
+    border-radius: 50%;
+    margin-top: 5px;
+
+    margin-left: auto;
+    margin-right: auto;
+}
