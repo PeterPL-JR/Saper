@@ -44,5 +44,6 @@ body {
 }
 .bordered {
     text-align: center;
+    font: bold 40px 'Verdana' !important;
     line-height: var(--tile-size);
 }

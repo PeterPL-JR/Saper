@@ -15,7 +15,7 @@ const bombs = [];
 
 const colors = [
     "blue", "green", "red", "darkblue",
-    "white", "white", "white", "white"
+    "darkred", "white", "white", "white"
 ];
 
 container.style.width = size + "px";
@@ -97,7 +97,7 @@ function createBounds() {
             }
             if(bombsCounter != 0) {
                 tile.obj.innerHTML = bombsCounter;
-                tile.obj.className = "tile tile-shown bordered";
+                tile.obj.style.color = colors[bombsCounter - 1];
             } 
         }
     }
@@ -117,7 +117,7 @@ function clickTile(x, y) {
     if (tile.bomb) {
         tile.obj.innerHTML = "<div class='bomb'></div>"
     }
-    tile.obj.className = "tile tile-shown";
+    tile.obj.className = "tile tile-shown bordered";
     tile.obj.removeAttribute("onclick");
 }
 
