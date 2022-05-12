@@ -3,6 +3,7 @@ const mapSize = 9;
 
 var container = getId("container");
 var firstClicked = false;
+var minDistance = 2;
 
 var firstX = -1;
 var firstY = -1;
@@ -20,6 +21,13 @@ const colors = [
 
 container.style.width = size + "px";
 container.style.height = size + "px";
+
+function showTile(x, y) {
+
+    for(var array of boundsPositions) {
+        
+    }
+}
 
 function createTiles() {
     for (var x = -1; x <= 1; x++) {
@@ -51,11 +59,11 @@ function createBombs() {
         var randX = getRandom(0, 8);
         var randY = getRandom(0, 8);
 
-        console.log("FirstX: ", firstX, ", X: ", randX);
-        console.log("FirstY: ", firstY, ", Y: ", randY);
-        console.log("\n");
+        var absX = Math.abs(randX - firstX);
+        var absY = Math.abs(randY - firstY);
 
-        if (randX == firstX && randY == firstY) {
+        if (randX == firstX && randY == firstY ||
+        (absX < minDistance && absY < minDistance)) {
             i--;
             continue;
         }
@@ -72,12 +80,6 @@ function createBombs() {
         var x = array[0];
         var y = array[1];
         tiles[x][y].bomb = true;
-    }
-
-    for (var x = 0; x < mapSize; x++) {
-        for (var y = 0; y < mapSize; y++) {
-            clickTile(x, y);
-        }
     }
 }
 
@@ -96,7 +98,8 @@ function createBounds() {
                 if (tiles[xx][yy].bomb) bombsCounter++;
             }
             if(bombsCounter != 0) {
-                tile.obj.innerHTML = bombsCounter;
+                tile.bounds = bombsCounter;
+                // tile.obj.innerHTML = bombsCounter;
                 tile.obj.style.color = colors[bombsCounter - 1];
             } 
         }
@@ -112,10 +115,13 @@ function clickTile(x, y) {
         firstClicked = true;
         createBombs();
         createBounds();
+        showTile(x, y);
     }
 
     if (tile.bomb) {
         tile.obj.innerHTML = "<div class='bomb'></div>"
+    } else if(tile.bounds != 0) {
+        tile.obj.innerHTML = tile.bounds;
     }
     tile.obj.className = "tile tile-shown bordered";
     tile.obj.removeAttribute("onclick");
