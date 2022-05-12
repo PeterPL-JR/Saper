@@ -23,15 +23,7 @@ container.style.width = size + "px";
 container.style.height = size + "px";
 
 function showEmptyTiles(x, y) {
-
-    if(tiles[x][y].bounds != 0) {
-        showTile(tiles[x][y]);
-        return;
-    }
-
-    for(var array of boundsPositions) {
-        
-    }
+    
 }
 
 function createTiles() {
@@ -52,6 +44,8 @@ function createTiles() {
 
             tiles[x][y] = {
                 obj: div,
+                type: "hidden",
+
                 bounds: 0,
                 bomb: false
             };
@@ -126,6 +120,8 @@ function clickTile(x, y) {
 }
 
 function showTile(tile) {
+    tile.type = "shown";
+
     if (tile.bomb) {
         tile.obj.innerHTML = "<div class='bomb'></div>"
     } else if(tile.bounds != 0) {
