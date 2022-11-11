@@ -1,0 +1,95 @@
+body {
+    background-color: black;
+    margin-top: 30px;
+    cursor: url("point.png") 24 24, auto;
+}
+
+:root {
+    --border-light: solid white 8px;
+    --border-dark: solid #5d5d5d 8px;
+
+    --shown-border: solid #7b7b7b 6px;
+}
+
+#board {
+    background-color: #121212;
+    margin-top: 30px;
+}
+#board *{
+    user-select: none;
+}
+
+#container {
+    width: max-content;
+    margin: auto;
+    text-align: center;
+}
+
+.saper-field {
+    width: var(--saper-field-size);
+    height: var(--saper-field-size);
+
+    background-color: gray;
+    float: left;
+    box-sizing: border-box;
+    
+    border-left: var(--border-light);
+    border-top: var(--border-light);
+
+    border-right: var(--border-dark);
+    border-bottom: var(--border-dark);
+}
+.saper-field:hover {
+    background-color: #959595;
+}
+
+.shown-saper-field {
+    width: var(--saper-field-size);
+    height: var(--saper-field-size);
+    
+    background-color: #b1b1b1;
+    float: left;
+    box-sizing: border-box;
+
+    border-left: var(--shown-border);
+    border-top: var(--shown-border);
+
+    font: bold 55px 'Verdana';
+    text-align: center;
+    line-height: var(--saper-field-size);
+}
+
+.shown-saper-field img {
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+}
+
+.menu {
+    display: inline-block;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.menu img {
+    background-color: #2b2b2b;
+    border-radius: 50%;
+    padding: 5px;
+    border: solid #d9d9d9 6px;
+    float: left;
+    margin-right: 15px;
+}
+
+.menu div {
+    font: bold 33px 'Verdana';
+    text-align: center;
+    color: white;
+    
+    border: solid white 5px;
+    border-radius: 10px;
+    
+    float: left;
+    width: 100px;
+    padding: 6px;
+    margin-top: 5%;
+}
