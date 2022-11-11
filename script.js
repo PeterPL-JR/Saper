@@ -12,6 +12,8 @@ const SHOWN_FIELD_CLASS = "shown-saper-field";
 
 let started = false;
 let over = false;
+let mouseButton = null;
+
 const fields = [];
 
 const COLORS = {
@@ -25,17 +27,23 @@ const COLORS = {
     8: "gray"
 };
 
+const FIELD_DEFAULT = 0;
+const FIELD_SIGNED = 1;
+const FIELD_WARNED = 2;
+
 class SaperField {
     constructor(x, y, div) {
         this.x = x;
         this.y = y;
         
         this.div = div;
+        this.state = FIELD_DEFAULT;
+
         this.shown = false;
         this.bomb = false;
     }
     show() {
-        if(this.shown) return;
+        if(this.shown || this.state == FIELD_SIGNED) return;
         
         this.div.className = SHOWN_FIELD_CLASS;
         this.shown = true;
@@ -47,6 +55,17 @@ class SaperField {
         } else {
             this.setNumber();
         }
+        checkVictory();
+    }
+    sign() {
+        if(this.shown) return;
+
+        this.state++;
+        if(this.state > FIELD_WARNED) this.state = FIELD_DEFAULT;
+        
+        if(this.state == FIELD_DEFAULT) this.div.innerHTML = null;
+        if(this.state == FIELD_SIGNED) this.div.innerHTML = "<img src='flag.png'>";
+        if(this.state == FIELD_WARNED) this.div.innerHTML = "?";
     }
     setBomb() {
         this.bomb = true;
@@ -84,13 +103,17 @@ function init() {
             
             const div = document.createElement("div");
             div.className = DEFAULT_FIELD_CLASS;
-            div.setAttribute("onmousedown", `show(${x}, ${y})`);
+            div.setAttribute("onmousedown", `mouseDown(${x}, ${y})`);
             board.appendChild(div);
             fields.push(new SaperField(x, y, div));
         }
         const clearBoth = document.createElement("div");
         clearBoth.style.setProperty("clear", "both");
         board.appendChild(clearBoth);
+    }
+
+    board.oncontextmenu = function() {
+        return false;
     }
 }
 
@@ -118,11 +141,22 @@ function setBombs(startedX, startedY) {
     }
 }
 
-function show(x, y) {
-    if(over) return;
-    if(!started) startGame(x, y);
+const LEFT_BUTTON = 0;
+const RIGHT_BUTTON = 2;
 
+function mouseDown(x, y) {
+    if(over) return;
+
+    if(window.event.button == LEFT_BUTTON) showField(x, y);
+    if(window.event.button == RIGHT_BUTTON) signField(x, y);
+}
+
+function showField(x, y) {
+    if(!started) startGame(x, y);
     showPath(x, y);
+}
+function signField(x, y) {
+    findField(x, y).sign();
 }
 
 function findField(x, y) {
@@ -149,7 +183,22 @@ function showPath(x, y) {
     }
 }
 
+function checkVictory() {
+    let hidden = 0;
+    for(let field of fields) {
+        if(!field.shown) {
+            hidden++;
+        }
+    }
+    if(!over && hidden == _BOMBS) {
+        victory();
+    }
+}
+
 function gameOver() {
     over = true;
     style.setProperty("--hover-saper-field-background", "gray");
+}
+function victory() {
+    console.log("Victoria!");
 }

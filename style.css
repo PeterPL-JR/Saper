@@ -54,10 +54,12 @@ body {
 
     border-left: var(--shown-border);
     border-top: var(--shown-border);
-
+}
+.saper-field, 
+.shown-saper-field {
     font: bold 55px 'Verdana';
     text-align: center;
-    line-height: var(--saper-field-size);
+    line-height: 55px;
 }
 
 .shown-saper-field img {
