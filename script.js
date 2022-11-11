@@ -11,6 +11,7 @@ const DEFAULT_FIELD_CLASS = "saper-field";
 const SHOWN_FIELD_CLASS = "shown-saper-field";
 
 let started = false;
+let over = false;
 const fields = [];
 
 const COLORS = {
@@ -41,14 +42,22 @@ class SaperField {
 
         if(this.bomb) {
             this.div.innerHTML = "<img src='bomb.png'>";
+            this.div.style.backgroundColor = "red";
+            gameOver();
         } else {
-            this.countBombs();
+            this.setNumber();
         }
     }
     setBomb() {
         this.bomb = true;
     }
-
+    setNumber() {
+        const bombs = this.countBombs();
+        if(bombs > 0) {
+            this.div.innerHTML = bombs;
+            this.div.style.color = COLORS[bombs];
+        }
+    }
     countBombs() {
         let bombs = 0;
 
@@ -63,10 +72,7 @@ class SaperField {
                 }
             }
         }
-        if(bombs > 0) {
-            this.div.innerHTML = bombs;
-            this.div.style.color = COLORS[bombs];
-        }
+        return bombs;
     }
 }
 
@@ -84,7 +90,7 @@ function init() {
         }
         const clearBoth = document.createElement("div");
         clearBoth.style.setProperty("clear", "both");
-        board.appendChild(clearBoth); 
+        board.appendChild(clearBoth);
     }
 }
 
@@ -105,7 +111,7 @@ function setBombs(startedX, startedY) {
         const yDist = Math.abs(y - startedY);
         
         const field = findField(x, y);
-        if(!field.bomb && !(x == startedX && y == startedY) && xDist >= MIN_DIST && yDist >= MIN_DIST) {
+        if(!field.bomb && !(x == startedX && y == startedY) && !(xDist < MIN_DIST && yDist < MIN_DIST)) {
             field.setBomb();
             hiddenBombs++;
         }
@@ -113,11 +119,10 @@ function setBombs(startedX, startedY) {
 }
 
 function show(x, y) {
+    if(over) return;
     if(!started) startGame(x, y);
 
-    const field = findField(x, y);
-    field.show();
-    console.log(field);
+    showPath(x, y);
 }
 
 function findField(x, y) {
@@ -128,4 +133,23 @@ function findField(x, y) {
 
 function getRandom(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function showPath(x, y) {
+    const field = findField(x, y);
+    if(!field || field.shown) return;
+    field.show();
+    
+    if(field.countBombs() == 0) {
+        showPath(x - 1, y);
+        showPath(x + 1, y);
+
+        showPath(x, y - 1);
+        showPath(x, y + 1);
+    }
+}
+
+function gameOver() {
+    over = true;
+    style.setProperty("--hover-saper-field-background", "gray");
 }

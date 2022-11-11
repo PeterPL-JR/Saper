@@ -9,6 +9,7 @@ body {
     --border-dark: solid #5d5d5d 8px;
 
     --shown-border: solid #7b7b7b 6px;
+    --hover-saper-field-background: #959595;
 }
 
 #board {
@@ -40,7 +41,7 @@ body {
     border-bottom: var(--border-dark);
 }
 .saper-field:hover {
-    background-color: #959595;
+    background-color: var(--hover-saper-field-background);
 }
 
 .shown-saper-field {
