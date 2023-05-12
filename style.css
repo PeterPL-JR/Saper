@@ -44,6 +44,11 @@ body {
     background-color: var(--hover-saper-field-background);
 }
 
+.saper-field img {
+    width: var(--saper-field-size);
+    height: var(--saper-field-size);
+}
+
 .shown-saper-field {
     width: var(--saper-field-size);
     height: var(--saper-field-size);
