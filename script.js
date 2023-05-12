@@ -1,6 +1,7 @@
 const board = document.getElementById("board");
 const style = document.documentElement.style;
 
+const faceImg = document.querySelector("#face-menu img");
 const timeDiv = document.getElementById("time");
 const bombsDiv = document.getElementById("bombs");
 
@@ -38,6 +39,13 @@ const FIELD_DEFAULT = 0;
 const FIELD_SIGNED = 1;
 const FIELD_WARNED = 2;
 
+const FACE_DEFAULT = 0;
+const FACE_SUPRISED = 1;
+const FACE_OVER = 3;
+const FACE_VICTORY = 4;
+
+const faces = [];
+
 class SaperField {
     constructor(x, y, div) {
         this.x = x;
@@ -67,6 +75,7 @@ class SaperField {
     }
     sign() {
         if(this.shown) return;
+        let oldState = this.state;
 
         this.state++;
         if(this.state > FIELD_WARNED) this.state = FIELD_DEFAULT;
@@ -75,10 +84,11 @@ class SaperField {
         if(this.state == FIELD_SIGNED) this.div.innerHTML = "<img src='flag.png'>";
         if(this.state == FIELD_WARNED) this.div.innerHTML = "?";
 
-        if(this.state == FIELD_SIGNED) {
-            signedFields++;
-        } else {
-            signedFields--;
+        if(oldState == FIELD_DEFAULT && this.state == FIELD_SIGNED) signedFields++;
+        if(oldState == FIELD_SIGNED) signedFields--;
+        
+        if(signedFields <= _BOMBS) {
+            bombsDiv.innerHTML = _BOMBS - signedFields;
         }
     }
     setBomb() {
@@ -107,17 +117,26 @@ class SaperField {
         }
         return bombs;
     }
+    setReady(ready) {
+        this.div.className = ready ? SHOWN_FIELD_CLASS : DEFAULT_FIELD_CLASS;
+    }
 }
 
 function init() {
     style.setProperty("--saper-field-size", FIELD_SIZE + "px");
     
+    faces[FACE_DEFAULT] = "face_default.png";
+    faces[FACE_SUPRISED] = "face_suprised.png";
+    faces[FACE_OVER] = "face_over.png";
+    faces[FACE_VICTORY] = "face_victory.png";
+
     for(let y = 0; y < MAP_SIZE; y++) {
         for(let x = 0; x < MAP_SIZE; x++) {
             
             const div = document.createElement("div");
             div.className = DEFAULT_FIELD_CLASS;
             div.setAttribute("onmousedown", `mouseDown(${x}, ${y})`);
+            div.setAttribute("onmouseup", `mouseUp(${x}, ${y})`);
             board.appendChild(div);
             fields.push(new SaperField(x, y, div));
         }
@@ -128,6 +147,19 @@ function init() {
 
     board.oncontextmenu = function() {
         return false;
+    }
+    board.onmouseleave = function() {
+        for(let field of fields) {
+            if(!field.shown) {
+                field.setReady(false);
+            }
+        }
+        if(!victory && !over) {
+            setFace(FACE_DEFAULT);
+        }
+    }
+    faceImg.onclick = function() {
+        window.location.reload();
     }
 }
 
@@ -161,7 +193,19 @@ const RIGHT_BUTTON = 2;
 
 function mouseDown(x, y) {
     if(over) return;
+    let field = findField(x, y);
 
+    if(window.event.button == LEFT_BUTTON && field.state != FIELD_SIGNED && field.state != FIELD_WARNED) {
+        field.setReady(true);
+        if(!field.shown) {
+            setFace(FACE_SUPRISED);
+        }
+    }
+}
+function mouseUp(x, y) {
+    if(over) return;
+    if(!victory) setFace(FACE_DEFAULT);
+    
     if(window.event.button == LEFT_BUTTON) showField(x, y);
     if(window.event.button == RIGHT_BUTTON) signField(x, y);
 }
@@ -232,12 +276,18 @@ function stopTimer() {
     clearInterval(timeInterval);
 }
 
+function setFace(face) {
+    faceImg.src = faces[face];
+}
+
 function gameOver() {
     over = true;
     style.setProperty("--hover-saper-field-background", "gray");
+    setFace(FACE_OVER);
     stopTimer();
 }
 function victory() {
     console.log("Victoria!");
+    setFace(FACE_VICTORY);
     stopTimer();
 }

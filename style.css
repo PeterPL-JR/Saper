@@ -5,6 +5,8 @@ body {
 }
 
 :root {
+    --img-size: 64px;
+
     --border-light: solid white 8px;
     --border-dark: solid #5d5d5d 8px;
 
@@ -13,7 +15,11 @@ body {
 }
 
 #board {
+    width: max-content;
+    height: max-content;
+
     background-color: #121212;
+    margin: auto;
     margin-top: 30px;
 }
 #board *{
@@ -80,6 +86,9 @@ body {
 }
 
 .menu img {
+    width: var(--img-size);
+    height: var(--img-size);
+
     background-color: #2b2b2b;
     border-radius: 50%;
     padding: 5px;
