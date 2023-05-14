@@ -16,6 +16,8 @@ const SHOWN_FIELD_CLASS = "shown-saper-field";
 
 let started = false;
 let over = false;
+let isVictory = false;
+
 let mouseButton = null;
 let signedFields = 0;
 
@@ -96,23 +98,20 @@ class SaperField {
     }
     setNumber() {
         const bombs = this.countBombs();
+
         if(bombs > 0) {
             this.div.innerHTML = bombs;
             this.div.style.color = COLORS[bombs];
+        } else {
+            this.clean = true;
         }
     }
     countBombs() {
         let bombs = 0;
 
-        for(let x = 0; x < 3; x++) {
-            for(let y = 0; y < 3; y++) {
-                const xPos = this.x - 1 + x;
-                const yPos = this.y - 1 + y;
-
-                const field = findField(xPos, yPos);
-                if(field && field.bomb) {
-                    bombs++;
-                }
+        for(let field of findFieldsAround(this.x, this.y)) {
+            if(field.bomb) {
+                bombs++;
             }
         }
         return bombs;
@@ -154,7 +153,7 @@ function init() {
                 field.setReady(false);
             }
         }
-        if(!victory && !over) {
+        if(!isVictory && !over) {
             setFace(FACE_DEFAULT);
         }
     }
@@ -204,7 +203,7 @@ function mouseDown(x, y) {
 }
 function mouseUp(x, y) {
     if(over) return;
-    if(!victory) setFace(FACE_DEFAULT);
+    if(!isVictory) setFace(FACE_DEFAULT);
     
     if(window.event.button == LEFT_BUTTON) showField(x, y);
     if(window.event.button == RIGHT_BUTTON) signField(x, y);
@@ -213,6 +212,14 @@ function mouseUp(x, y) {
 function showField(x, y) {
     if(!started) startGame(x, y);
     showPath(x, y);
+
+    for(let field of fields) {
+        if(field.clean) {
+            for(let fieldAround of findFieldsAround(field.x, field.y)) {
+                fieldAround.show();
+            }
+        }
+    }
 }
 function signField(x, y) {
     findField(x, y).sign();
@@ -222,6 +229,22 @@ function findField(x, y) {
     return fields.find(function(field) {
         return field.x == x && field.y == y;
     });
+}
+function findFieldsAround(fieldX, fieldY) {
+    let fieldsAround = [];
+
+    for(let x = 0; x < 3; x++) {
+        for(let y = 0; y < 3; y++) {
+            const xPos = fieldX - 1 + x;
+            const yPos = fieldY - 1 + y;
+
+            const field = findField(xPos, yPos);
+            if(field) {
+                fieldsAround.push(field);
+            }
+        }
+    }
+    return fieldsAround;
 }
 
 function getRandom(min, max) {
@@ -287,6 +310,7 @@ function gameOver() {
     stopTimer();
 }
 function victory() {
+    isVictory = true;
     console.log("Victoria!");
     setFace(FACE_VICTORY);
     stopTimer();
